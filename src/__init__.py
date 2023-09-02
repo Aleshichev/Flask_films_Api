@@ -24,7 +24,7 @@ SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
 app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
 
 from src import models
-from src.routes import Smoke, FilmListApi
+from src.routes import FilmListApi, ActorListApi
 
-api.add_resource(Smoke, '/smoke', strict_slashes=False)
 api.add_resource(FilmListApi, '/films', '/films/<uuid>', strict_slashes=False)
+api.add_resource(ActorListApi, '/actors', '/actors/<id>', strict_slashes=False)

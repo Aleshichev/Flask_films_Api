@@ -21,6 +21,10 @@
     {
       "name": "Film Request",
       "description": "Example API for requesting and return films requests"
+    },
+        {
+      "name": "Actor Request",
+      "description": "Example API for requesting and return actors requests"
     }
   ],
   "paths": {
@@ -145,6 +149,48 @@
           }
         }
       },
+      "patch": {
+        "summary": "patch a film request by uuid",
+        "tags": [
+          "Film Request"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uuid",
+            "required": true,
+            "description": "Film Request uuid",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Film Request Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/film"
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/film"
+            }
+          },
+          "400": {
+            "description": "Failed. Wrong data."
+          }
+        }
+      },
       "delete": {
         "summary": "Delete Film Request by UUID",
         "tags": [
@@ -176,14 +222,217 @@
           }
         }
       }
+    },
+    "/actors": {
+      "get": {
+        "tags": [
+          "Actor Request"
+        ],
+        "summary": "Returns all available actors in the system",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/actorsResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Actor Request"
+        ],
+        "summary": "Create a new actor",
+        "requestBody": {
+          "description": "Actor Request Post Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/actors"
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          },
+          "400": {
+            "description": "Failed. Wrong data."
+          }
+        }
+      }
+    },
+    "/actors/{id}": {
+      "get": {
+        "tags": [
+          "Actor Request"
+        ],
+        "summary": "Get actor with given ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Actor Request id",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/actor"
+            }
+          },
+          "400": {
+            "description": "Failed. Wrong data."
+          },
+          "404": {
+            "description": "Failed. Actor was not found."
+          }
+        }
+      },
+      "put": {
+        "summary": "edit a actor request by id",
+        "tags": [
+          "Actor Request"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Actor Request id",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Actor Request Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/actor"
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/actor"
+            }
+          },
+          "400": {
+            "description": "Failed. Wrong data."
+          }
+        }
+      },
+      "patch": {
+        "summary": "patch a film request by id",
+        "tags": [
+          "Actor Request"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Actor Request id",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Actor Request Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/actor"
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/actor"
+            }
+          },
+          "400": {
+            "description": "Failed. Wrong data."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Actor Request by ID",
+        "tags": [
+          "Actor Request"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Actor Request id",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          },
+          "400": {
+            "description": "Failed. Misunderstood Request."
+          },
+          "404": {
+            "description": "Failed. Actor was not found."
+          }
+        }
+      }
     }
   },
+
   "components": {
     "schemas": {
       "uuid": {
         "properties": {
           "uuid": {
             "type": "string"
+          }
+        }
+      },
+      "id": {
+        "properties": {
+          "id": {
+            "type": "number"
           }
         }
       },
@@ -248,6 +497,49 @@
             "type": "object",
             "additionalProperties": {
               "$ref": "#/components/schemas/film"
+            }
+          }
+        }
+      },
+      "actors": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "birthday": {
+            "type": "string",
+            "format": "string"
+          },
+          "is_active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "actor": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "birthday": {
+            "type": "string",
+            "format": "string"
+          },
+          "is_active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "actorsResponse": {
+        "type": "object",
+        "properties": {
+          "bookRequest": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/actor"
             }
           }
         }

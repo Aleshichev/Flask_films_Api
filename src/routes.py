@@ -1,92 +1,61 @@
-from datetime import datetime
 from flask import request
+from marshmallow import ValidationError
+
 from src import db
 from flask_restful import Resource
-from src.models import Film
-
-class Smoke(Resource):
-    def get(self):
-        return {'message': 'ok'}, 200
+from src.models import Film, Actor
+from src.schemas.actors import ActorSchema
+from src.schemas.films import FilmSchema
 
 class FilmListApi(Resource):
+    film_schema = FilmSchema()
 
     def get(self, uuid=None):
+
         if not uuid:
             films = db.session.query(Film).all()
-            return [f.to_dict() for f in films], 200
+            return self.film_schema.dump(films, many=True), 200
         film = db.session.query(Film).filter_by(uuid=uuid).first()
+
         if not film:
-            return '', 404
-        return film.to_dict(), 200
+            return 'No film', 404
+        return self.film_schema.dump(film), 200
 
     def post(self):
-        film_json = request.json
-        if not film_json:
-            return {'message': 'Wrong data'}, 400
         try:
-            film = Film(
-                title=film_json['title'],
-                release_date=datetime.strptime(film_json['release_date'], '%B %d, %Y'),
-                distributed_by=film_json['distributed_by'],
-                rating=film_json.get('rating'),
-                length=film_json.get('length'),
-                description=film_json.get('description')
-            )
-            db.session.add(film)
-            db.session.commit()
-        except(ValueError, KeyError) as e:
-            return f"{e}", 400
-        return {'message': 'Created successfully'}, 201
+            film = self.film_schema.load(request.json, session=db.session)
+        except ValidationError as e:
+            return {'message': str(e)}, 400
+        db.session.add(film)
+        db.session.commit()
+        return self.film_schema.dump(film), 201
 
     def put(self, uuid):
-        film_json = request.json
-        if not film_json:
-            return {'message': 'Wrong data'}, 400
-        try:
-            db.session.query(Film).filter_by(uuid=uuid).update(
-                dict(
-                    title=film_json['title'],
-                    release_date=datetime.strptime(film_json['release_date'], '%B %d, %Y'),
-                    distributed_by=film_json['distributed_by'],
-                    rating=film_json.get('rating'),
-                    length=film_json.get('length'),
-                    description=film_json.get('description')
-                )
-            )
-            db.session.commit()
-        except (ValueError, KeyError) as e:
-            return f'{e}', 400
-        return {'message': 'Updated successfully'}, 200
 
-    def patch(self, uuid):
         film = db.session.query(Film).filter_by(uuid=uuid).first()
         if not film:
-            return "", 404
-        film_json = request.json
-        title = film_json.get('title')
-        release_date = datetime.strptime(film_json.get('release_date'), '%B %d, %Y') if film_json.get(
-            'release_date') else None
-        distributed_by = film_json.get('distributed_by'),
-        rating = film_json.get('rating'),
-        length = film_json.get('length'),
-        description = film_json.get('description')
+            return "No Film", 404
+        try:
+            film = self.film_schema.load(request.json, instance=film, session=db.session)
+        except ValidationError as e:
+            return {'message': str(e)}, 400
+        db.session.add(film)
+        db.session.commit()
+        return self.film_schema.dump(film), 200
 
-        if title:
-            film.title = title
-        elif release_date:
-            film.release_date = release_date
-        elif distributed_by:
-            film.distributed_by = distributed_by
-        elif rating:
-            film.rating = rating
-        elif length:
-            film.length = length
-        elif description:
-            film.description = description
+    def patch(self, uuid):
+
+        film = db.session.query(Film).filter_by(uuid=uuid).first()
+        if not film:
+            return "No Film", 404
+        try:
+            film = self.film_schema.load(request.json, instance=film, partial=True, session=db.session)
+        except ValidationError as e:
+            return {'message': str(e)}, 400
 
         db.session.add(film)
         db.session.commit()
-        return {'message': 'Updated successfully'}, 200
+        return self.film_schema.dump(film), 200
 
     def delete(self, uuid):
         film = db.session.query(Film).filter_by(uuid=uuid).first()
@@ -97,20 +66,61 @@ class FilmListApi(Resource):
         return '', 204
 
 class ActorListApi(Resource):
-    def get(self, uuid=None):
-        if not uuid:
-            films = get_all_films()
-        film = get_film_by_uuid(uuid)
-        if not film:
-            return '', 404
-        return film, 200
+    actor_schema = ActorSchema()
+
+    def get(self, id=None):
+
+        if not id:
+            actor = db.session.query(Actor).all()
+            return self.actor_schema.dump(actor, many=True), 200
+        actor = db.session.query(Actor).filter_by(id=id).first()
+
+        if not actor:
+            return 'No film', 404
+        return self.actor_schema.dump(actor), 200
 
     def post(self):
-        pass
-    def put(self):
-        pass
-    def patch(self):
-        pass
-    def delete(self):
-        pass
+        try:
+            actor = self.actor_schema.load(request.json, session=db.session)
+        except ValidationError as e:
+            return {'message': str(e)}, 400
+        db.session.add(actor)
+        db.session.commit()
+        return self.actor_schema.dump(actor), 201
+
+    def put(self, id):
+
+        actor = db.session.query(Actor).filter_by(id=id).first()
+        if not actor:
+            return "No Film", 404
+        try:
+            actor = self.actor_schema.load(request.json, instance=actor, session=db.session)
+        except ValidationError as e:
+            return {'message': str(e)}, 400
+        db.session.add(actor)
+        db.session.commit()
+        return self.actor_schema.dump(actor), 200
+
+    def patch(self, id):
+
+        actor = db.session.query(Actor).filter_by(id=id).first()
+        if not actor:
+            return "No Film", 404
+        try:
+            film = self.actor_schema.load(request.json, instance=actor, partial=True, session=db.session)
+        except ValidationError as e:
+            return {'message': str(e)}, 400
+
+        db.session.add(actor)
+        db.session.commit()
+        return self.actor_schema.dump(actor), 200
+
+    def delete(self, id):
+        actor = db.session.query(Actor).filter_by(id=id).first()
+        if not actor:
+            return "", 404
+        db.session.delete(actor)
+        db.session.commit()
+        return '', 204
+
 

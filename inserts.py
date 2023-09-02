@@ -78,14 +78,28 @@ def populate_films():
         michael_gambon = Actor(name='Michael Gambon', birthday=date(1940, 10, 19), is_active=True)
         alan_rickman = Actor(name='Alan Rickman', birthday=date(1946, 2, 21), is_active=False)
 
-        # db.session.add(harry_potter_and_ph_stone)
-        # db.session.add(harry_potter_and_ch_s)
-        # db.session.add(harry_potter_and_priz_az)
-        # db.session.add(harry_potter_and_ph_goblet_fire)
-        # db.session.add(harry_potter_and_order_phoenix)
-        # db.session.add(harry_potter_and_half_blood_prince)
-        # db.session.add(harry_potter_and_deathly_hallows_1)
-        # db.session.add(harry_potter_and_deathly_hallows_2)
+        harry_potter_and_ph_stone.actors = [daniel_radcliffe, emma_watson, rupert_grint, richard_harris, alan_rickman]
+        harry_potter_and_ch_s.actors = [daniel_radcliffe, emma_watson, rupert_grint, richard_harris, alan_rickman]
+        harry_potter_and_priz_az.actors = [daniel_radcliffe, emma_watson, rupert_grint, michael_gambon, alan_rickman]
+        harry_potter_and_ph_goblet_fire.actors = [daniel_radcliffe, emma_watson, rupert_grint, michael_gambon,
+                                                  alan_rickman]
+        harry_potter_and_order_phoenix.actors = [daniel_radcliffe, emma_watson, rupert_grint, michael_gambon,
+                                                 alan_rickman]
+        harry_potter_and_half_blood_prince.actors = [daniel_radcliffe, emma_watson, rupert_grint, michael_gambon,
+                                                     alan_rickman]
+        harry_potter_and_deathly_hallows_1.actors = [daniel_radcliffe, emma_watson, rupert_grint, michael_gambon,
+                                                     alan_rickman]
+        harry_potter_and_deathly_hallows_2.actors = [daniel_radcliffe, emma_watson, rupert_grint, michael_gambon,
+                                                     alan_rickman]
+
+        db.session.add(harry_potter_and_ph_stone)
+        db.session.add(harry_potter_and_ch_s)
+        db.session.add(harry_potter_and_priz_az)
+        db.session.add(harry_potter_and_ph_goblet_fire)
+        db.session.add(harry_potter_and_order_phoenix)
+        db.session.add(harry_potter_and_half_blood_prince)
+        db.session.add(harry_potter_and_deathly_hallows_1)
+        db.session.add(harry_potter_and_deathly_hallows_2)
 
         db.session.add(daniel_radcliffe)
         db.session.add(emma_watson)
@@ -93,6 +107,8 @@ def populate_films():
         db.session.add(richard_harris)
         db.session.add(michael_gambon)
         db.session.add(alan_rickman)
+
+
 
         db.session.commit()
         db.session.close()

@@ -1,6 +1,5 @@
 from flask import request
 from marshmallow import ValidationError
-
 from src import db
 from flask_restful import Resource
 from src.models import Actor

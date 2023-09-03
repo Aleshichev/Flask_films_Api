@@ -19,15 +19,79 @@
   ],
   "tags": [
     {
+      "name": "Authentication",
+      "description": "User registration and login with token"
+    },
+    {
       "name": "Film Request",
       "description": "Example API for requesting and return films requests"
     },
-        {
+    {
       "name": "Actor Request",
       "description": "Example API for requesting and return actors requests"
     }
   ],
   "paths": {
+    "/register": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Register a new user",
+        "requestBody": {
+          "description": "User registration request object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRegistrationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered successfully"
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        }
+      }
+    },
+    "/login": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "User login with token",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/films": {
       "get": {
         "tags": [
@@ -419,7 +483,6 @@
       }
     }
   },
-
   "components": {
     "schemas": {
       "uuid": {
@@ -543,7 +606,39 @@
             }
           }
         }
-      }
+      },
+      "UserRegistrationRequest": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "format": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "string"
+          },
+          "password": {
+            "type": "string",
+            "format": "string"
+          },
+          "is_admin": {
+            "type": "boolean"
+          }
+        }
+      },
+      "securitySchemes": {
+        "BearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      },
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ]
     }
   }
 }

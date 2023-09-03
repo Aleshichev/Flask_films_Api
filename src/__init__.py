@@ -26,6 +26,9 @@ app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
 from src import models
 from src.Resources.films import FilmListApi
 from src.Resources.actors import ActorListApi
+from src.Resources.auth import AuthRegister, AuthLogin
 
 api.add_resource(FilmListApi, '/films', '/films/<uuid>', strict_slashes=False)
 api.add_resource(ActorListApi, '/actors', '/actors/<id>', strict_slashes=False)
+api.add_resource(AuthRegister, '/register', strict_slashes=False)
+api.add_resource(AuthLogin, '/login', strict_slashes=False)

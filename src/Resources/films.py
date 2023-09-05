@@ -28,7 +28,7 @@ class FilmListApi(Resource):
 
         return self.film_schema.dump(film), 200
 
-    @token_required
+    # @token_required
     def post(self):
         try:
             film = self.film_schema.load(request.json, session=db.session)

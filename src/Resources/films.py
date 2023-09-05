@@ -1,16 +1,16 @@
 from flask import request
 from marshmallow import ValidationError
-
 from src import db
 from flask_restful import Resource
+from src.Resources.auth import token_required
 from src.models import Film
 from src.schemas.films import FilmSchema
 
 class FilmListApi(Resource):
     film_schema = FilmSchema()
 
+    @token_required
     def get(self, uuid=None):
-
         if not uuid:
             films = db.session.query(Film).all()
             return self.film_schema.dump(films, many=True), 200
@@ -18,8 +18,11 @@ class FilmListApi(Resource):
 
         if not film:
             return 'No film', 404
+
+
         return self.film_schema.dump(film), 200
 
+    @token_required
     def post(self):
         try:
             film = self.film_schema.load(request.json, session=db.session)
@@ -29,6 +32,7 @@ class FilmListApi(Resource):
         db.session.commit()
         return self.film_schema.dump(film), 201
 
+    @token_required
     def put(self, uuid):
 
         film = db.session.query(Film).filter_by(uuid=uuid).first()
@@ -42,6 +46,7 @@ class FilmListApi(Resource):
         db.session.commit()
         return self.film_schema.dump(film), 200
 
+    @token_required
     def patch(self, uuid):
 
         film = db.session.query(Film).filter_by(uuid=uuid).first()
@@ -56,6 +61,7 @@ class FilmListApi(Resource):
         db.session.commit()
         return self.film_schema.dump(film), 200
 
+    @token_required
     def delete(self, uuid):
         film = db.session.query(Film).filter_by(uuid=uuid).first()
         if not film:

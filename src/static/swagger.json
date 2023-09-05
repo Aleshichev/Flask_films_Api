@@ -60,16 +60,22 @@
       }
     },
     "/login": {
-      "get": {
+      "post": {
         "tags": [
           "Authentication"
         ],
         "summary": "User login with token",
-        "security": [
-          {
-            "BearerAuth": []
+        "requestBody": {
+          "description": "User login request object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLoginRequest"
+              }
+            }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "Login successful",
@@ -98,6 +104,11 @@
           "Film Request"
         ],
         "summary": "Returns all available films in the system",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -112,6 +123,11 @@
           "Film Request"
         ],
         "summary": "Create a new film",
+          "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "requestBody": {
           "description": "Film Request Post Object",
           "required": true,
@@ -145,6 +161,11 @@
           "Film Request"
         ],
         "summary": "Get film with given UUID",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -173,6 +194,11 @@
       },
       "put": {
         "summary": "edit a film request by uuid",
+          "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Film Request"
         ],
@@ -215,6 +241,11 @@
       },
       "patch": {
         "summary": "patch a film request by uuid",
+          "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Film Request"
         ],
@@ -257,6 +288,11 @@
       },
       "delete": {
         "summary": "Delete Film Request by UUID",
+          "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Film Request"
         ],
@@ -293,6 +329,11 @@
           "Actor Request"
         ],
         "summary": "Returns all available actors in the system",
+          "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -307,6 +348,11 @@
           "Actor Request"
         ],
         "summary": "Create a new actor",
+          "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "requestBody": {
           "description": "Actor Request Post Object",
           "required": true,
@@ -340,6 +386,11 @@
           "Actor Request"
         ],
         "summary": "Get actor with given ID",
+          "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -368,6 +419,11 @@
       },
       "put": {
         "summary": "edit a actor request by id",
+          "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Actor Request"
         ],
@@ -410,6 +466,11 @@
       },
       "patch": {
         "summary": "patch a film request by id",
+          "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Actor Request"
         ],
@@ -452,6 +513,11 @@
       },
       "delete": {
         "summary": "Delete Actor Request by ID",
+          "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "tags": [
           "Actor Request"
         ],
@@ -627,18 +693,26 @@
           }
         }
       },
-      "securitySchemes": {
-        "BearerAuth": {
-          "type": "http",
-          "scheme": "bearer",
-          "bearerFormat": "JWT"
+      "UserLoginRequest": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "format": "string"
+          },
+          "password": {
+            "type": "string",
+            "format": "string"
+          }
         }
-      },
-      "security": [
-        {
-          "BearerAuth": []
-        }
-      ]
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
     }
   }
 }

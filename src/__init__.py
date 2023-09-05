@@ -32,3 +32,4 @@ api.add_resource(FilmListApi, '/films', '/films/<uuid>', strict_slashes=False)
 api.add_resource(ActorListApi, '/actors', '/actors/<id>', strict_slashes=False)
 api.add_resource(AuthRegister, '/register', strict_slashes=False)
 api.add_resource(AuthLogin, '/login', strict_slashes=False)
+

@@ -4,11 +4,13 @@ from src import db
 from flask_restful import Resource
 from src.models import Actor
 from src.schemas.actors import ActorSchema
+from .auth import token_required
 
 
 class ActorListApi(Resource):
     actor_schema = ActorSchema()
 
+    @token_required
     def get(self, id=None):
 
         if not id:
@@ -20,6 +22,7 @@ class ActorListApi(Resource):
             return 'No film', 404
         return self.actor_schema.dump(actor), 200
 
+    @token_required
     def post(self):
         try:
             actor = self.actor_schema.load(request.json, session=db.session)
@@ -29,6 +32,7 @@ class ActorListApi(Resource):
         db.session.commit()
         return self.actor_schema.dump(actor), 201
 
+    @token_required
     def put(self, id):
 
         actor = db.session.query(Actor).filter_by(id=id).first()
@@ -42,6 +46,7 @@ class ActorListApi(Resource):
         db.session.commit()
         return self.actor_schema.dump(actor), 200
 
+    @token_required
     def patch(self, id):
 
         actor = db.session.query(Actor).filter_by(id=id).first()
@@ -56,6 +61,7 @@ class ActorListApi(Resource):
         db.session.commit()
         return self.actor_schema.dump(actor), 200
 
+    @token_required
     def delete(self, id):
         actor = db.session.query(Actor).filter_by(id=id).first()
         if not actor:

@@ -40,7 +40,8 @@ class AuthLogin(Resource):
         if not username or not password:
             return {"message": "Username and password are required"}, 400
 
-        user = db.session.query(User).filter_by(username=username).first()
+        user = User.find_user_by_username(username=username)
+        # user = db.session.query(User).filter_by(username=username).first()
         if not user or not check_password_hash(user.password, password):
             return {"message": "Invalid credentials"}, 401
 
@@ -71,7 +72,8 @@ def token_required(func):
             return "", 401
         except jwt.DecodeError as e:
             return (f"Error decoding token: {str(e)}"), 401
-        user = db.session.query(User).filter_by(uuid=uuid).first()
+        user = User.find_user_by_uuid(uuid)
+        # user = db.session.query(User).filter_by(uuid=uuid).first()
         if not user:
             return "", 401
         return func(self, *args, **kwargs)

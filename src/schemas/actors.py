@@ -9,6 +9,7 @@ class ActorSchema(SQLAlchemyAutoSchema):
         load_instance = True
         include_fk = True
 
+    id = auto_field()
     name = auto_field()
     birthday = auto_field()
     is_active = auto_field()

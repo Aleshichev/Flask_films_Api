@@ -38,7 +38,7 @@ class FilmListApi(Resource):
         db.session.commit()
         return self.film_schema.dump(film), 201
 
-    @token_required
+    # @token_required
     def put(self, uuid):
 
         film = FilmService.fetch_film_by_uuid(db.session, uuid)
@@ -52,7 +52,7 @@ class FilmListApi(Resource):
         db.session.commit()
         return self.film_schema.dump(film), 200
 
-    @token_required
+    # @token_required
     def patch(self, uuid):
 
         film = FilmService.fetch_film_by_uuid(db.session, uuid)
@@ -67,7 +67,7 @@ class FilmListApi(Resource):
         db.session.commit()
         return self.film_schema.dump(film), 200
 
-    @token_required
+    # @token_required
     def delete(self, uuid):
         film = FilmService.fetch_film_by_uuid(db.session, uuid)
         if not film:

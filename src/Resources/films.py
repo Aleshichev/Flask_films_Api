@@ -11,7 +11,7 @@ from sqlalchemy.orm import selectinload
 class FilmListApi(Resource):
     film_schema = FilmSchema()
 
-    # @token_required
+    @token_required
     def get(self, uuid=None):
         if not uuid:
             # films = db.session.query(Film).all()
@@ -28,7 +28,7 @@ class FilmListApi(Resource):
 
         return self.film_schema.dump(film), 200
 
-    # @token_required
+    @token_required
     def post(self):
         try:
             film = self.film_schema.load(request.json, session=db.session)
@@ -38,7 +38,7 @@ class FilmListApi(Resource):
         db.session.commit()
         return self.film_schema.dump(film), 201
 
-    # @token_required
+    @token_required
     def put(self, uuid):
 
         film = FilmService.fetch_film_by_uuid(db.session, uuid)
@@ -52,7 +52,7 @@ class FilmListApi(Resource):
         db.session.commit()
         return self.film_schema.dump(film), 200
 
-    # @token_required
+    @token_required
     def patch(self, uuid):
 
         film = FilmService.fetch_film_by_uuid(db.session, uuid)
@@ -67,7 +67,7 @@ class FilmListApi(Resource):
         db.session.commit()
         return self.film_schema.dump(film), 200
 
-    # @token_required
+    @token_required
     def delete(self, uuid):
         film = FilmService.fetch_film_by_uuid(db.session, uuid)
         if not film:

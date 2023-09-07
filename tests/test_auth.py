@@ -6,6 +6,7 @@ from unittest.mock import patch
 from src.models import User
 import pytest
 
+# hide @token_required before start
 
 @pytest.fixture(scope='function')
 def cleanup_last_user():

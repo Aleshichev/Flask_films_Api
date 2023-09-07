@@ -4,6 +4,7 @@ from src import app
 from dataclasses import dataclass
 from unittest.mock import patch
 
+# hide @token_required before start
 
 @dataclass
 class FakeFilm:

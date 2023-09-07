@@ -6,6 +6,8 @@ from unittest.mock import patch
 from src.models import Actor
 from src import db
 
+# hide @token_required before start
+
 @dataclass
 class FakeActor:
     name = 'Fake Actor'

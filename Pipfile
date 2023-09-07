@@ -12,9 +12,12 @@ flask-swagger-ui = "*"
 marshmallow-sqlalchemy = "*"
 pyjwt = "*"
 flask-login = "*"
+pytest-cov = "*"
+coverage = "*"
 
 [dev-packages]
 pytest = "*"
+coverage = "*"
 
 [requires]
 python_version = "3.10"

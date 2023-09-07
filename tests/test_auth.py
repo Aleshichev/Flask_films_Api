@@ -147,3 +147,6 @@ class TestRegisterUser:
             response_data = json.loads(resp.data.decode('utf-8'))
             print(mocked_query.return_value.username)
             assert mocked_query.return_value.username == response_data['username']
+
+if __name__ == '__main__':
+    app.run()

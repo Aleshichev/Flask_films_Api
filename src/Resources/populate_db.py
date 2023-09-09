@@ -1,9 +1,15 @@
 """
-Results:
+Results 10 films :
 PopulateDB ------------ Done in 14.42 sec
 PopulateDBThreaded ---- Done in 4.32 sec.
 ThreadPoolExecutor ---- Done in 4.46 sec.
 ProcessPoolExecutor --- Done in 8.48 sec.
+
+Results 100 films :
+PopulateDB ------------ Done in 139.63 sec.
+PopulateDBThreaded ---- Done in 17.49 sec.
+ThreadPoolExecutor ---- Done in 21.35 sec.
+ProcessPoolExecutor --- Done in 36.87 sec.
 
 """
 import datetime
@@ -12,10 +18,27 @@ import bs4
 import requests
 from src import db
 from flask_restful import Resource
+import re
 import threading
-from concurrent.futures.thread import ThreadPoolExecutor as PoolExecutor
-# from concurrent.futures.process import ProcessPoolExecutor as PoolExecutor
+# from concurrent.futures.thread import ThreadPoolExecutor as PoolExecutor
+from concurrent.futures.process import ProcessPoolExecutor as PoolExecutor
 
+
+def check_release_date(release_date):
+
+    if len(release_date) == 4:
+        new_date = '01 January ' + release_date
+        release_date = datetime.datetime.strptime(new_date.strip(), '%d %B %Y')
+    else:
+        release_date = datetime.datetime.strptime(release_date.strip(), '%d %B %Y')
+
+    return release_date
+
+
+def remove_leading_alpha_or_zero(input_string):
+    # Use a regular expression to remove leading alphabetic characters or '0'
+    result = re.sub(r'^[a-zA-Z0]*', '', input_string)
+    return result
 
 def convert_time(time: str) -> float:
     hour, minute = time.split('h')
@@ -23,10 +46,22 @@ def convert_time(time: str) -> float:
     return minutes
 
 
+def check_length(length):
+    if type(length[:1]) == str:
+        length = remove_leading_alpha_or_zero(length)
+    if length[:1] == 0:
+        length = remove_leading_alpha_or_zero(length)
+    if length[-1:] == 'h':
+        length = length[-2:] + ' 5m'
+
+    new_length = float(convert_time(length))
+    return new_length
+
+
 class PopulateDB(Resource):
 
     def __init__(self, headers=None):
-        super().__init__()  # Call the superclass constructor
+        super().__init__()
         self.url = 'https://www.imdb.com/'
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
@@ -47,18 +82,16 @@ class PopulateDB(Resource):
         url = self.url + 'chart/top'
         resp = requests.get(url, headers=self.headers)
         resp.raise_for_status()
-
         html = resp.text
         soup = bs4.BeautifulSoup(html, features='html.parser')
         movie_containers = soup.find_all('li', class_='ipc-metadata-list-summary-item sc-bca49391-0 eypSaE cli-parent')
-        movie_links = [movie.a.attrs['href'] for movie in movie_containers][:10]
+        movie_links = [movie.a.attrs['href'] for movie in movie_containers][:1]
         return movie_links
 
     def parse_films(self, film_urls):
         films_to_create = []
         for url in film_urls:
             url = self.url + url
-            print(f'Getting a detailed info about the film - {url}')
             film_content = requests.get(url, headers=self.headers)
             film_content.raise_for_status()
 
@@ -69,12 +102,11 @@ class PopulateDB(Resource):
             description = soup.find('span', class_='sc-466bb6c-2 eVLpWt').text.strip()
             title_bar = soup.find('ul', class_='ipc-inline-list ipc-inline-list--show-dividers sc-afe43def-4 kdXikI baseAlt').text
             release_date = title_bar[:4]
-            if len(release_date) == 4:
-                new_date = '01 January ' + release_date
-                release_date = datetime.datetime.strptime(new_date.strip(), '%d %B %Y')
-            else:
-                release_date = datetime.datetime.strptime(release_date.strip(), '%d %B %Y')
-            length = float(convert_time(title_bar[-6:]))
+            release_date = check_release_date(release_date)
+
+            length = title_bar[-6:]
+            length = check_length(length)
+
             films_to_create.append(
                 {
                     'title': title,
@@ -90,7 +122,6 @@ class PopulateDB(Resource):
     @staticmethod
     def populate_db_with_films(films):
         return FilmService.bulk_create_films(db.session, films)
-
 
 
 class PopulateDBThreaded(Resource):
@@ -125,8 +156,7 @@ class PopulateDBThreaded(Resource):
         html = resp.text
         soup = bs4.BeautifulSoup(html, features="html.parser")
         movie_containers = soup.find_all('li', class_='ipc-metadata-list-summary-item sc-bca49391-0 eypSaE cli-parent')
-        movie_links = [movie.a.attrs['href'] for movie in movie_containers][:10]
-
+        movie_links = [movie.a.attrs['href'] for movie in movie_containers][:1]
         return movie_links
 
     def parse_films(self, film_url, films_to_create):
@@ -143,12 +173,12 @@ class PopulateDBThreaded(Resource):
         title_bar = soup.find('ul',
                               class_='ipc-inline-list ipc-inline-list--show-dividers sc-afe43def-4 kdXikI baseAlt').text
         release_date = title_bar[:4]
-        if len(release_date) == 4:
-            new_date = '01 January ' + release_date
-            release_date = datetime.datetime.strptime(new_date.strip(), '%d %B %Y')
-        else:
-            release_date = datetime.datetime.strptime(release_date.strip(), '%d %B %Y')
-        length = float(convert_time(title_bar[-6:]))
+        release_date = check_release_date(release_date)
+
+
+        length = title_bar[-6:]
+        length = check_length(length)
+
         films_to_create.append(
             {
                 'title': title,
@@ -199,7 +229,7 @@ class PopulateDBThreadPoolExecutor(Resource):
         html = resp.text
         soup = bs4.BeautifulSoup(html, features="html.parser")
         movie_containers = soup.find_all('li', class_='ipc-metadata-list-summary-item sc-bca49391-0 eypSaE cli-parent')
-        movie_links = [movie.a.attrs['href'] for movie in movie_containers][:10]
+        movie_links = [movie.a.attrs['href'] for movie in movie_containers][:1]
 
         return movie_links
 
@@ -217,12 +247,11 @@ class PopulateDBThreadPoolExecutor(Resource):
         title_bar = soup.find('ul',
                               class_='ipc-inline-list ipc-inline-list--show-dividers sc-afe43def-4 kdXikI baseAlt').text
         release_date = title_bar[:4]
-        if len(release_date) == 4:
-            new_date = '01 January ' + release_date
-            release_date = datetime.datetime.strptime(new_date.strip(), '%d %B %Y')
-        else:
-            release_date = datetime.datetime.strptime(release_date.strip(), '%d %B %Y')
-        length = float(convert_time(title_bar[-6:]))
+        release_date = check_release_date(release_date)
+
+        length = title_bar[-6:]
+        length = check_length(length)
+
         print(f'Received information about - {title}', flush=True)
         return {
             'title': title,

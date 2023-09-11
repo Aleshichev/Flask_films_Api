@@ -27,9 +27,13 @@ from src import models
 from src.Resources.films import FilmListApi
 from src.Resources.actors import ActorListApi
 from src.Resources.auth import AuthRegister, AuthLogin
+from src.Resources.populate_db import PopulateDB, PopulateDBThreaded, PopulateDBThreadPoolExecutor
 
 api.add_resource(FilmListApi, '/films', '/films/<uuid>', strict_slashes=False)
 api.add_resource(ActorListApi, '/actors', '/actors/<id>', strict_slashes=False)
 api.add_resource(AuthRegister, '/register', strict_slashes=False)
 api.add_resource(AuthLogin, '/login', strict_slashes=False)
+api.add_resource(PopulateDB, '/populate_db', strict_slashes=False)
+api.add_resource(PopulateDBThreaded, '/populate_db_threaded', strict_slashes=False)
+api.add_resource(PopulateDBThreadPoolExecutor, '/populate_db_executor', strict_slashes=False)
 

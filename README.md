@@ -35,10 +35,10 @@
 - **/populate_db_executor/** -  **GET** method method with **bs4** and **ThreadPoolExecutor** or **ProcessPoolExecutor** parse site https://www.imdb.com/ and download films data in db
 
 Results 100 films :
-PopulateDB ------------ Done in 139.63 sec.
-PopulateDBThreaded ---- Done in 17.49 sec.
-ThreadPoolExecutor ---- Done in 21.35 sec.
-ProcessPoolExecutor --- Done in 36.87 sec.
+- PopulateDB ------------ Done in 139.63 sec.
+- PopulateDBThreaded ---- Done in 17.49 sec.
+- ThreadPoolExecutor ---- Done in 21.35 sec.
+- ProcessPoolExecutor --- Done in 36.87 sec.
 
 ## Pytests :
 - **test_actors.py** - checks response actors api with mock.
